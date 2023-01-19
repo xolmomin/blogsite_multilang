@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-19 15:01+0000\n"
+"POT-Creation-Date: 2023-01-19 16:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,6 +27,14 @@ msgstr ""
 #: blogApp/templates/login.html:10
 msgid "Login"
 msgstr ""
+
+#: blogApp/templates/login.html:31
+msgid "Signup"
+msgstr ""
+
+#: blogApp/templates/topNavigation.html:35
+msgid "Home"
+msgstr "home_ru"
 
 #: root/settings.py:98
 msgid "English"

@@ -1,8 +1,12 @@
-import django
 from django.contrib import admin
+from parler.admin import TranslatableAdmin
+
 from blogApp.models import UserProfile, Category, Post
 
-# Register your models here.
+
+class CategoryAdmin(TranslatableAdmin):
+    pass
+
 admin.site.register(UserProfile)
-admin.site.register(Category)
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(Post)
