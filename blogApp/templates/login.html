@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 
 {% block pageContent %}
@@ -6,7 +7,7 @@
         <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
             <div class="card card-default rounded-0 shadow">
                 <div class="card-header">
-                    <h4 class="card-title"><b>Login</b></h4>
+                    <h4 class="card-title"><b>{% translate 'Login' %}</b></h4>
                 </div>
                 <div class="card-body">
                     <div class="container-fluid">
