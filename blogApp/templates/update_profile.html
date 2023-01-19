@@ -1,0 +1,77 @@
+{% extends 'base.html' %}{% load static %}{% block pageContent %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12">
+        <div class="card card-default rounded-0 shadow">
+            <div class="card-header">
+                <h4 class="card-title"><b>Update Profile</b></h4>
+            </div>
+            <div class="card-body">
+                <div class="container-fluid">
+                    <form id="register-user" method="POST" action="{% url 'update-profile' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mdc-layout-grid">
+                            <div class="mdc-layout-grid__inner">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="first_name" class="control-label">First Name</label>
+                                            <input type="text" class="form-control rounded-0" name="first_name" id="first_name" value="{{ userData.first_name }}" required="required">
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="last_name" class="control-label">Last Name</label>
+                                            <input type="text" class="form-control rounded-0" name="last_name" id="last_name" value="{{ userData.last_name }}" required="required">
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="dob" class="control-label">Birthdate</label>
+                                            <input type="date" class="form-control rounded-0" name="dob" id="dob" value="{{ userProfile.dob|date:'Y-m-d' }}" required="required">
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="contact" class="control-label">Contact</label>
+                                            <input type="text" class="form-control rounded-0" name="contact" id="contact" value="{{ userProfile.contact }}" required="required">
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="address" class="control-label">Address</label>
+                                            <textarea rows="3" class="form-control rounded-0" name="address" id="address" required="required">{{ userProfile.address }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="email" class="control-label">Email</label>
+                                            <input type="email" class="form-control rounded-0" name="email" id="email" value="{{ userData.email }}" required="required">
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="username" class="control-label">Username</label>
+                                            <input type="text" class="form-control rounded-0" name="username" id="username" value="{{ userData.username }}" required="required">
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="current_password" class="control-label">Current Password</label>
+                                            <input type="password" class="form-control rounded-0" name="current_password" id="current_password" required="required">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% for field in form1 %} {% for error in field.errors %}
+                                <div class="alert alert-danger my-2">
+                                    <p>{{ error }}</p>
+                                </div>
+                                {% endfor %} {% endfor %} {% for field in form2 %} {% for error in field.errors %}
+                                <div class="alert alert-danger my-2">
+                                    <p>{{ error }}</p>
+                                </div>
+                                {% endfor %} {% endfor %}
+                                <div class="form-group mb-3">
+                                    <div class="d-flex w-100 justify-content-end">
+                                        <button class="btn btn-sm rounded-0 btn-primary col-4">
+                                                Update
+                                            </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock pageContent %}

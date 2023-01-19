@@ -1,0 +1,169 @@
+{% extends 'base.html' %} {% load static %}{% block headerContent %}
+    <link rel="stylesheet" href="{% static 'blogApp/assets/summernote/summernote-lite.min.css' %}">
+    <script src="{% static 'blogApp/assets/summernote/summernote-lite.min.js' %}"></script>
+{% endblock headerContent %} {% block pageContent %}
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="row justify-content-center">
+            <div class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 card card-default rounded-0 shadow">
+                <div class="card-header">
+                    <h4 class="card-title fw-bold">{% if post.id %}Update Post Details{% else %} Add New
+                        Post{% endif %}</h4>
+                </div>
+                <div class="card-body">
+                    <form action="" id="post-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{ post.id }}"> {% if post.author %}
+                        <input type="hidden" name="author" value="{{ post.author.id }}">
+                        <span class="text-muted">Authored by: <b>{{ post.author }}</b></span> {% else %}
+                        <input type="hidden" name="author" value="{{ user.id }}"> {% endif %}
+                        <div class="form-group mb-3">
+                            <label for="title" class="control-label">Title</label>
+                            <input type="text" class="form-control rounded-0" id="title" name="title"
+                                   value="{{ post.title }}" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="category" class="control-label">Category</label>
+                            <select name="category" id="category" class="form-select rounded-0 select2" required>
+                                {% if not post.category %}
+                                    <option value="" disabled selected></option>
+                                {% else %}
+                                    <option value="" disabled></option>
+                                {% endif %}
+                                {% for category in category_list %}
+                                    {% if post.category == category.id %}
+                                        <option value="{{ category.id }}" selected>{{ category.name }}</option>
+                                    {% else %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="blog_post" class="control-label">Content</label>
+                            <textarea class="form-control rounded-0 summernote" name="blog_post" id="blog_post" rows="5"
+                                      required>{{ post.blog_post }}</textarea>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="status" class="control-label">Status</label>
+                            <select name="status" id="status" class="form-select rounded-0" required>
+                                {% if post.status == 1 or not post.status %}
+                                    <option value="1" selected>Published</option>
+                                {% else %}
+                                    <option value="1">Published</option>
+                                {% endif %}
+
+                                {% if post.status == 2 %}
+                                    <option value="2" selected>Unpublished</option>
+                                {% else %}
+                                    <option value="2">Unpublished</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <center><img src="{% if post.banner %}{{ post.banner.url }}
+                                {% else %}{{ MEDIA_URL }}/media/default/python-django.png{% endif %}"
+                                         id="post-banner-mgt" alt=""
+                                         class="img-fluid img-thumbnail bg-gradient bg-dark"></center>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="banner" class="control-label">Banner Image</label>
+                            <input type="file" class="form-control rounded-0" name="banner" id="banner" accept="image/*"
+                                   onchange="DisplayImage(this)">
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex w-100 justify-content-end">
+                        <button class="btn btn-sm btn-primary bg-gradient me-2 rounded-0" form="post-form"><i
+                                class="fa fa-save"></i> Save
+                        </button>
+                        <a class="btn btn-sm btn-light bg-gradient border rounded-0" href="{% url 'post-mgt' %}"><i
+                                class="fa fa-angle-left"></i> Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock pageContent %} {% block ScriptBlock %}
+    <script>
+        function DisplayImage(input) {
+            console.log(input.files)
+            if (event.target.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function () {
+                    var output = $('#post-banner-mgt');
+                    output.attr('src', reader.result)
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+
+        };
+        $(function () {
+            $('.select2').select2({
+                placeholder: 'Please Select Here',
+                width: '100%'
+            })
+            $('.summernote').summernote({
+                placeholder: 'Write your blog content/article here',
+                tabsize: 2,
+                height: "45vh",
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ]
+            });
+            $('#post-form').submit(function (e) {
+                e.preventDefault();
+                var _this = $(this)
+                $('.err-msg').remove();
+                var el = $('<div>')
+                el.addClass("alert alert-danger err-msg")
+                el.hide()
+                if (_this[0].checkValidity() == false) {
+                    _this[0].reportValidity();
+                    return false;
+                }
+                start_loader();
+                $.ajax({
+                    headers: {
+                        "X-CSRFToken": '{{csrf_token}}'
+                    },
+                    url: "{% url 'save-post' %}",
+                    data: new FormData($(this)[0]),
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    method: 'POST',
+                    type: 'POST',
+                    dataType: 'json',
+                    error: err => {
+                        console.log(err)
+                        alert_toast("An error occured", 'error');
+                        end_loader();
+                    },
+                    success: function (resp) {
+                        if (typeof resp == 'object' && resp.status == 'success') {
+                            el.removeClass("alert alert-danger err-msg")
+                            location.replace('{% url "post-mgt" %}')
+                        } else if (resp.status == 'failed' && !!resp.msg) {
+                            el.html(resp.msg)
+                        } else {
+                            el.text("An error occured", 'error');
+                            end_loader();
+                            console.err(resp)
+                        }
+                        _this.prepend(el)
+                        el.show('slow')
+                        $("html, body, .modal").scrollTop(0);
+                        end_loader()
+                    }
+                })
+            })
+        })
+    </script>
+{% endblock ScriptBlock %}

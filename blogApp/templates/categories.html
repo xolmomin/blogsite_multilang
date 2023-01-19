@@ -1,0 +1,74 @@
+{% extends 'base.html' %} {% block pageContent %}
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="card card-default rounded-0 shadow ">
+        <div class="card-header">
+            <div class="d-flex w-100 align-items-center justify-content-between">
+                <h4 class="card-title fw-bold">Category Management</h4>
+
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="container-fluid">
+                <div id="list" class="list-group">
+                    {% for category in categories %}
+                    <a href="{% url 'category-post' category.id %}" class="list-group-item list-group-item-action">
+                        <h4><b>{{ category.name }}</b></h4>
+                        <hr>
+                        <p>{{ category.description }}</p>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% if not categories %}
+                <center>No Category Listed Yet</center>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock pageContent %} {% block ScriptBlock %}
+<script>
+    $(function() {
+        $('.delete-data').click(function() {
+            _conf("Are you sure to delete this category permanently?", "delete_category", [$(this).attr('data-id')])
+        })
+    })
+
+    function delete_category($id) {
+        start_loader();
+        var _this = $(this)
+        $('.err-msg').remove();
+        var el = $('<div>')
+        el.addClass("alert alert-danger err-msg")
+        el.hide()
+        $.ajax({
+            url: '{% url "delete-category" %}',
+            headers: {
+                'X-CSRFToken': "{{csrf_token}}"
+            },
+            method: 'POST',
+            data: {
+                id: $id
+            },
+            dataType: 'json',
+            error: err => {
+                console.log(err)
+                el.text('An error occurred.')
+                el.show('slow')
+                end_loader()
+            },
+            success: function(resp) {
+                if (resp.status == 'success') {
+                    location.reload()
+                } else if (!!resp.msg) {
+                    el.text('An error occurred.')
+                    el.show('slow')
+                } else {
+                    el.text('An error occurred.')
+                    el.show('slow')
+                }
+                end_loader()
+            }
+        })
+    }
+</script>
+{% endblock ScriptBlock %}

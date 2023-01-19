@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% load humanize %} {% block pageContent %}
+
+<!--Section: Content-->
+<section class="text-center">
+    <h4 class="mb-5"><strong>'{{ category }}' Posts</strong></h4>
+
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow border">
+                <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                    <img src="{% if post.banner %}{{ post.banner.url }}{% else %}{{ MEDIA_URL}}/media/default/python-django.png{% endif %}" class="img-fluid post-banner bg-gradient bg-dark" />
+                    <a href="#!">
+                        <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <div class="card-text truncate-3">{{ post.blog_post|safe }} </div>
+                    <a href="{% url 'view-post' post.id %}" class="btn btn-primary">Read</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+
+    </div>
+    {% if not posts %}
+    <center>No Bogs has been posted yet</center>
+    {% endif %}
+
+</section>
+
+
+</div> --> {% endblock pageContent %}
